@@ -7,7 +7,7 @@
  * @subpackage lexicon
  */
 $_lang['directory'] = 'Directory';
-$_lang['file_confirm_remove'] = 'Are you sure you want to remove this file? This could potentially break your website.';
+$_lang['file_confirm_remove'] = 'Are you sure you want to remove this file? Removing a file could potentially break your website. Make sure you know what this file does before removing it.';
 $_lang['file_create'] = 'Create File';
 $_lang['file_deleted'] = 'Success!';
 $_lang['file_delete_file'] = 'Delete File';
@@ -16,8 +16,10 @@ $_lang['file_download'] = 'Download File';
 $_lang['file_download_file'] = 'Download File';
 $_lang['file_download_unzip'] = 'Unzip File';
 $_lang['file_edit'] = 'Edit File';
+$_lang['file_err_ae'] = 'File %s already exists';
 $_lang['file_err_chmod'] = 'An unknown error occurred while trying to chmod the target.';
 $_lang['file_err_chmod_ns'] = 'Please specify a mode to chmod to.';
+$_lang['file_err_create'] = 'An unknown error occurred while trying to create the file.';
 $_lang['file_err_ext_not_allowed'] = 'File extension `[[+ext]]` is not permitted.';
 $_lang['file_err_filter'] = 'No files match the specified filter.';
 $_lang['file_err_invalid'] = 'The file is not a regular file and cannot be removed.';
@@ -112,3 +114,20 @@ $_lang['upf_upload_err'] = 'Upload error.';
 $_lang['upf_uploading'] = 'Uploading...';
 $_lang['upf_uploading_desc'] = 'Uploading: {0} of {1} files complete.';
 $_lang['upload_files'] = 'Upload Files';
+$_lang['no_file_err'] = 'No file was uploaded.';
+
+$_lang['upload.buttons.choose']           = 'Choose file(s)';
+$_lang['upload.buttons.clear']            = 'Empty list';
+$_lang['upload.buttons.upload']           = 'Upload';
+$_lang['upload.buttons.close']            = 'Close';
+$_lang['upload.title.destination_path']   = 'Upload destination: [[+path]]';
+$_lang['upload.upload_progress']          = '[[+loaded]] / [[+total]]';
+$_lang['upload.notpermitted.extension']   = 'Upload of this filetype (.[[+ext]]) is not allowed!';
+$_lang['upload.notpermitted.filesize']    = 'Filesize bigger ([[+size]]) than allowed! (max. [[+max]])';
+$_lang['upload.columns.file']             = 'File';
+$_lang['upload.columns.state']            = 'State';
+$_lang['upload.contextmenu.remove_entry'] = 'Remove entry';
+$_lang['upload.clear_list.all']           = 'Clear list';
+$_lang['upload.clear_list.notpermitted']  = 'Remove not permitted only';
+$_lang['upload.msg.title.error']          = 'Error';
+$_lang['upload.upload.success']           = 'Upload successful';

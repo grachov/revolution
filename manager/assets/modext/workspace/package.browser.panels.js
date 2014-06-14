@@ -157,10 +157,10 @@ MODx.grid.PackageBrowserGrid = function(config) {
                  ,'downloads','releasedon','screenshot','license','location','version-compiled'
                  ,'supports_db','minimum_supports','breaks_at','featured','audited','changelog'
                  ,'downloaded','dlaction-text','dlaction-icon']
-        ,url: MODx.config.connectors_url+'workspace/packages-rest.php'
+        ,url: MODx.config.connector_url
         ,baseParams: {
 			provider: MODx.provider
-			,action:'getList'
+			,action: 'workspace/packages/rest/getList'
 		}
         ,paging: true
         ,pageSize: 10
@@ -251,7 +251,7 @@ Ext.extend(MODx.grid.PackageBrowserGrid,MODx.grid.Grid,{
 		var h = [];
 		h.push({ className:'details', text: _('view_details') });
 		if(!record.data.downloaded){
-			h.push({ className:'download green', text: _('download') });
+			h.push({ className:'download primary', text: _('download') });
 		}
 		values.actions = h;
 		return this.mainColumnTpl.apply(values);
@@ -263,7 +263,7 @@ Ext.extend(MODx.grid.PackageBrowserGrid,MODx.grid.Grid,{
 		Ext.Ajax.request({
 			url : this.config.url
 			,params : {
-				action : 'download'
+				action : 'workspace/packages/rest/download'
 				,info : rec.location+'::'+rec.signature
 				,provider : MODx.provider
 			}
@@ -272,7 +272,7 @@ Ext.extend(MODx.grid.PackageBrowserGrid,MODx.grid.Grid,{
 				this.processResult( result.responseText );
 			}
 			,failure: function ( result, request) {
-				Ext.MessageBox.alert('Failed', result.responseText);
+				Ext.MessageBox.alert(_('failure'), result.responseText);
 				c.hideWait();
 			}
 		});
@@ -289,6 +289,10 @@ Ext.extend(MODx.grid.PackageBrowserGrid,MODx.grid.Grid,{
 			setTimeout(function(){
 				me.updateBreadcrumbs(_('list_of_packages_in_provider'));
 			}, 5000);
+		}
+		else {
+			Ext.getCmp('modx-panel-packages-browser').hideWait();
+			Ext.MessageBox.alert(_('failure'), data.message);
 		}
 	}
 
@@ -504,12 +508,12 @@ MODx.PackageBrowserThumbsView = function(config) {
 
     this._initTemplates();
     Ext.applyIf(config,{
-        url: MODx.config.connectors_url+'workspace/packages-rest.php'
+        url: MODx.config.connector_url
         ,fields: ['id','version','release','signature','author','description','instructions','createdon','editedon','name'
                  ,'downloads','releasedon','screenshot','license','supports','location','version-compiled'
                  ,'downloaded','dlaction-text','dlaction-icon']
         ,baseParams: {
-            action: 'getList'
+            action: 'workspace/packages/rest/getList'
             ,provider: MODx.provider
         }
         ,tpl: this.templates.thumb
@@ -605,9 +609,9 @@ Ext.extend(MODx.PackageBrowserThumbsView,MODx.DataView,{
         MODx.Ajax.request({
             url: this.config.url
             ,params: {
-                action: 'download'
+                action: 'workspace/packages/rest/download'
                 ,info: data.location+'::'+data.signature
-                ,provider: MODx.provider || 1
+                ,provider: MODx.provider || MODx.config.default_provider
             }
             ,scope: this
             ,listeners: {
@@ -642,7 +646,7 @@ MODx.panel.PackageBrowserView = function(config) {
 	Ext.applyIf(config,{
 		layout: 'column'
 		,xtype: 'panel'
-		,url: MODx.config.connectors_url+'workspace/packages-rest.php'
+		,url: MODx.config.connector_url
 		,tbar: [{
 			xtype: 'button'
 			,text: _('back_to_browser')
@@ -773,9 +777,9 @@ Ext.extend(MODx.panel.PackageBrowserView,MODx.Panel,{
 		MODx.Ajax.request({
             url: this.url
             ,params: {
-                action: 'download'
+                action: 'workspace/packages/rest/download'
                 ,info: record.location+'::'+record.signature
-                ,provider: MODx.provider || 1
+                ,provider: MODx.provider || MODx.config.default_provider
             }
             ,scope: this
             ,listeners: {

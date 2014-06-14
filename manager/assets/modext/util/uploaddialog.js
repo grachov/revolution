@@ -270,7 +270,7 @@ Ext.ux.UploadDialog.BrowseButton = Ext.extend(Ext.Button,{
    */
   createInputFile : function()
   {
-    var button_container = this.el.child('tbody' /* JYJ '.x-btn-center'*/);
+    var button_container = this.el;
         button_container.position('relative');
        this.wrap = this.el.wrap({cls:'tbody'});    
        this.input_file = this.wrap.createChild({
@@ -975,9 +975,11 @@ Ext.extend(Ext.ux.UploadDialog.Dialog, Ext.Window,{
     input_file.dom.disabled = true;
     
     var store = this.grid_panel.getStore();
+    var fileApi = input_file.dom.files;
+    var filename = (typeof fileApi != 'undefined') ? fileApi[0].name : input_file.dom.value.replace("C:\\fakepath\\", "");
     store.add(new Ext.ux.UploadDialog.FileRecord({
           state: Ext.ux.UploadDialog.FileRecord.STATE_QUEUE
-          ,filename: input_file.dom.value
+          ,filename: filename
           ,note: this.i18n.note_queued_to_upload
           ,input_element: input_file
     }));

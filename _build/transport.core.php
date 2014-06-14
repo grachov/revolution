@@ -452,6 +452,7 @@ unset ($policies,$policy,$idx,$ct,$attributes);
 $c = $xpdo->newObject('modContext');
 $c->fromArray(array (
     'key' => 'web',
+    'name' => 'Website',
     'description' => 'The default front-end context for your web site.',
 ), '', true, true);
 $attributes = array (
@@ -482,6 +483,7 @@ $xpdo->log(xPDO::LOG_LEVEL_INFO,'Packaged in web context.'); flush();
 $c = $xpdo->newObject('modContext');
 $c->fromArray(array (
     'key' => 'mgr',
+    'name' => 'Manager',
     'description' => 'The default manager or administration context for content management activity.',
 ), '', true, true);
 $attributes = array (
@@ -538,43 +540,15 @@ $attributes = array (
     'vehicle_class' => 'xPDOFileVehicle',
 );
 $files[] = array (
-    'source' => MODX_BASE_PATH . 'connectors/browser',
-    'target' => "return MODX_CONNECTORS_PATH;",
-);
-$files[] = array (
-    'source' => MODX_BASE_PATH . 'connectors/context',
-    'target' => "return MODX_CONNECTORS_PATH;",
-);
-$files[] = array (
-    'source' => MODX_BASE_PATH . 'connectors/element',
-    'target' => "return MODX_CONNECTORS_PATH;",
-);
-$files[] = array (
-    'source' => MODX_BASE_PATH . 'connectors/layout',
-    'target' => "return MODX_CONNECTORS_PATH;",
-);
-$files[] = array (
-    'source' => MODX_BASE_PATH . 'connectors/resource',
-    'target' => "return MODX_CONNECTORS_PATH;",
-);
-$files[] = array (
-    'source' => MODX_BASE_PATH . 'connectors/security',
-    'target' => "return MODX_CONNECTORS_PATH;",
-);
-$files[] = array (
-    'source' => MODX_BASE_PATH . 'connectors/source',
-    'target' => "return MODX_CONNECTORS_PATH;",
-);
-$files[] = array (
     'source' => MODX_BASE_PATH . 'connectors/system',
     'target' => "return MODX_CONNECTORS_PATH;",
 );
 $files[] = array (
-    'source' => MODX_BASE_PATH . 'connectors/workspace',
+    'source' => MODX_BASE_PATH . 'connectors/lang.js.php',
     'target' => "return MODX_CONNECTORS_PATH;",
 );
 $files[] = array (
-    'source' => MODX_BASE_PATH . 'connectors/lang.js.php',
+    'source' => MODX_BASE_PATH . 'connectors/modx.config.js.php',
     'target' => "return MODX_CONNECTORS_PATH;",
 );
 foreach ($files as $fileset) {

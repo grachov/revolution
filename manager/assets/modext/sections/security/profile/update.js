@@ -1,6 +1,6 @@
 /**
  * Loads the profile page
- * 
+ *
  * @class MODx.page.Profile
  * @extends MODx.Component
  * @param {Object} config An object of configuration properties
@@ -11,7 +11,6 @@ MODx.page.Profile = function(config) {
     Ext.applyIf(config,{
         components: [{
             xtype: 'modx-panel-profile'
-            ,renderTo: 'modx-panel-profile-div'
             ,user: config.user
         }]
     });
@@ -24,8 +23,11 @@ MODx.panel.Profile = function(config) {
     config = config || {};
     Ext.applyIf(config,{
         id: 'modx-panel-profile'
-        ,url: MODx.config.connectors_url+'security/profile.php'
-        ,layout: 'fit'
+        ,url: MODx.config.connector_url
+        ,baseParams: {
+            action: 'security/profile'
+        }
+        ,layout: 'anchor'
         ,cls: 'container'
         ,bodyStyle: 'background: none;'
         ,border: false
@@ -51,6 +53,7 @@ MODx.panel.Profile = function(config) {
             ,bodyStyle: 'padding: 15px;'
             ,id: 'modx-profile-recent-docs'
             ,autoHeight: true
+            ,layout: 'anchor'
             ,items: [{
                 html: '<p>'+_('profile_recent_resources_desc')+'</p><br />'
                 ,id: 'modx-profile-recent-docs-msg'
@@ -60,11 +63,7 @@ MODx.panel.Profile = function(config) {
                 ,user: config.user
                 ,preventRender: true
             }]
-        }],{
-            border: true
-            ,defaults: { bodyStyle: 'padding: 15px; '}
-            ,id: 'modx-panel-profile-tabs'
-        })]
+        }])]
     });
     MODx.panel.Profile.superclass.constructor.call(this,config);
 };
@@ -73,7 +72,7 @@ Ext.reg('modx-panel-profile',MODx.panel.Profile);
 
 /**
  * The information panel for the profile
- * 
+ *
  * @class MODx.panel.UpdateProfile
  * @extends MODx.FormPanel
  * @param {Object} config An object of config properties
@@ -84,9 +83,9 @@ MODx.panel.UpdateProfile = function(config) {
     Ext.applyIf(config,{
         title: _('general_information')
         ,id: 'modx-panel-profile-update'
-        ,url: MODx.config.connectors_url+'security/profile.php'
+        ,url: MODx.config.connector_url
         ,baseParams: {
-            action: 'update'
+            action: 'security/profile/update'
             ,id: config.user
         }
         ,layout: 'form'
@@ -146,6 +145,7 @@ MODx.panel.UpdateProfile = function(config) {
             text: _('save')
             ,scope: this
             ,handler: this.submit
+            ,cls:'primary-button'
         }]
         ,listeners: {
             'setup': {fn:this.setup,scope:this}
@@ -156,9 +156,9 @@ MODx.panel.UpdateProfile = function(config) {
 Ext.extend(MODx.panel.UpdateProfile,MODx.FormPanel,{
     setup: function() {
         MODx.Ajax.request({
-            url: MODx.config.connectors_url+'security/profile.php'
+            url: MODx.config.connector_url
             ,params: {
-                action: 'get'
+                action: 'security/profile/get'
                 ,id: this.config.user
             }
             ,listeners: {
@@ -173,7 +173,7 @@ Ext.reg('modx-panel-profile-update',MODx.panel.UpdateProfile);
 
 /**
  * A panel for changing the user password
- * 
+ *
  * @class MODx.panel.ChangeProfilePassword
  * @extends MODx.FormPanel
  * @param {Object} config An object of config properties
@@ -183,9 +183,9 @@ MODx.panel.ChangeProfilePassword = function(config) {
     config = config || {};
     Ext.applyIf(config,{
         title: _('reset_password')
-        ,url: MODx.config.connectors_url+'security/profile.php'
+        ,url: MODx.config.connector_url
         ,baseParams: {
-            action: 'changepassword'
+            action: 'security/profile/changepassword'
             ,id: config.user
         }
         ,frame: true
@@ -230,6 +230,7 @@ MODx.panel.ChangeProfilePassword = function(config) {
             text: _('save')
             ,scope: this
             ,handler: this.submit
+            ,cls:'primary-button'
         }]
         ,listeners: {
             'success': {fn:this.success,scope:this}

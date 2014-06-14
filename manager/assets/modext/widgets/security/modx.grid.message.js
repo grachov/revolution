@@ -3,8 +3,11 @@ MODx.panel.Messages = function(config) {
     config = config || {};
     Ext.applyIf(config,{
         id: 'modx-panel-message'
-        ,url: MODx.config.connectors_url+'security/message.php'
-        ,layout: 'fit'
+        ,url: MODx.config.connector_url
+        ,baseParams: {
+            action: 'security/message/getlist'
+        }
+        ,layout: 'anchor'
         ,bodyStyle: 'background: none;'
         ,cls: 'container form-with-labels'
         ,border: false
@@ -30,9 +33,7 @@ MODx.panel.Messages = function(config) {
                 ,user: config.user
                 ,preventRender: true
             }]
-        }],{
-            border: true
-        })]
+        }])]
     });
     MODx.panel.Messages.superclass.constructor.call(this,config);
 };
@@ -41,7 +42,7 @@ Ext.reg('modx-panel-messages',MODx.panel.Messages);
 
 /**
  * Loads a grid of Messages.
- * 
+ *
  * @class MODx.grid.Message
  * @extends MODx.grid.Grid
  * @param {Object} config An object of options.
@@ -49,21 +50,29 @@ Ext.reg('modx-panel-messages',MODx.panel.Messages);
  */
 MODx.grid.Message = function(config) {
     config = config || {};
-    
+
     this.exp = new Ext.grid.RowExpander({
         tpl : new Ext.Template(
             '<span style="float: right;">'
-            ,'<i>'+_('sent_by')+': {sender_name} <br />'+_('sent_on')+': {date_sent}</i><br /><br />'
+            ,'<i>'+_('sent_by')+': {sender_name:this.htmlEncode} <br />'+_('sent_on')+': {date_sent}</i><br /><br />'
             ,'</span>'
-            ,'<h3>{subject}</h3>'
-            ,'<p>{message}</p>'
+            ,'<h3>{subject:this.htmlEncode}</h3>'
+            ,'<p>{message:this.htmlEncode}</p>'
+            , {
+                htmlEncode: function(value){
+                    return Ext.util.Format.htmlEncode(value);
+                }
+            }
         )
     });
     this.exp.on('expand',this.read,this);
     Ext.applyIf(config,{
         title: _('messages')
         ,id: 'modx-grid-message'
-        ,url: MODx.config.connectors_url+'security/message.php'
+        ,url: MODx.config.connector_url
+        ,baseParams: {
+            action: 'security/message/getlist'
+        }
         ,fields: ['id','type','subject','message','sender','recipient','private'
             ,'date_sent'
             ,'read','sender_name']
@@ -78,10 +87,12 @@ MODx.grid.Message = function(config) {
             header: _('sender')
             ,dataIndex: 'sender_name'
             ,width: 120
+            ,renderer: Ext.util.Format.htmlEncode
         },{
             header: _('subject')
             ,dataIndex: 'subject'
             ,width: 200
+            ,renderer: Ext.util.Format.htmlEncode
         },{
             header: _('date_sent')
             ,dataIndex: 'date_sent'
@@ -97,6 +108,7 @@ MODx.grid.Message = function(config) {
             text: _('message_new')
             ,scope: this
             ,handler: { xtype: 'modx-window-message-create' ,blankValues: true }
+            ,cls:'primary-button'
         },'->',{
             xtype: 'textfield'
             ,name: 'search'
@@ -130,7 +142,7 @@ Ext.extend(MODx.grid.Message,MODx.grid.Grid,{
         MODx.Ajax.request({
             url: this.config.url
             ,params: {
-                action: 'read'
+                action: 'security/message/read'
                 ,id: r.id
             }
             ,listeners: {
@@ -148,7 +160,7 @@ Ext.extend(MODx.grid.Message,MODx.grid.Grid,{
         MODx.Ajax.request({
             url: this.config.url
             ,params: {
-                action: 'unread'
+                action: 'security/message/unread'
                 ,id: rec.data.id
             }
             ,listeners: {
@@ -171,7 +183,7 @@ Ext.extend(MODx.grid.Message,MODx.grid.Grid,{
         }
         m.push({
             text: _('delete')
-            ,handler: this.remove.createDelegate(this,["message_remove_confirm"])
+            ,handler: this.remove.createDelegate(this,['message_remove_confirm', 'security/message/remove'])
         });
         return m;
     }
@@ -185,7 +197,7 @@ Ext.extend(MODx.grid.Message,MODx.grid.Grid,{
     }
     ,clearFilter: function() {
     	this.getStore().baseParams = {
-            action: 'getList'
+            action: 'security/message/getList'
     	};
         Ext.getCmp('modx-messages-search').reset();
     	this.getBottomToolbar().changePage(1);
@@ -196,7 +208,7 @@ Ext.reg('modx-grid-message',MODx.grid.Message);
 
 /**
  * Generates the new message window.
- *  
+ *
  * @class MODx.window.CreateMessage
  * @extends MODx.Window
  * @param {Object} config An object of options.
@@ -206,8 +218,8 @@ MODx.window.CreateMessage = function(config) {
     config = config || {};
     Ext.applyIf(config,{
         title: _('message_create')
-        ,url: MODx.config.connectors_url+'security/message.php'
-        ,action: 'create'
+        ,url: MODx.config.connector_url
+        ,action: 'security/message/create'
         ,fields: [{
             xtype: 'combo'
             ,fieldLabel: _('recipient_type')
@@ -279,14 +291,14 @@ MODx.window.CreateMessage = function(config) {
 };
 Ext.extend(MODx.window.CreateMessage,MODx.Window,{
     tps: ['user','usergroup','role','all']
-    
+
     ,initRecipient: function() {
         for (var i=1;i<this.tps.length;i++) {
             var f = this.fp.getForm().findField('mc-recipient-'+this.tps[i]);
             if (f) { this.hideField(f); }
         }
     }
-    
+
     ,showRecipient: function(cb,rec,i) {
         for (var x=0;x<this.tps.length;x++) {
             var f = this.fp.getForm().findField('mc-recipient-'+this.tps[x]);

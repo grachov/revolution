@@ -34,7 +34,7 @@ MODx.Console = function(config) {
             ,itemId: 'okBtn'
             ,disabled: true
             ,scope: this
-            ,handler: this.hide
+            ,handler: this.hideConsole
         }]
         ,keys: [{
             key: Ext.EventObject.S
@@ -43,7 +43,7 @@ MODx.Console = function(config) {
             ,scope: this
         },{
             key: Ext.EventObject.ENTER
-            ,fn: this.hide
+            ,fn: this.hideConsole
             ,scope: this
         }]
     });
@@ -76,33 +76,40 @@ Ext.extend(MODx.Console,Ext.Window,{
         this.getComponent('body').el.dom.innerHTML = '';
         this.provider = new Ext.direct.PollingProvider({
             type:'polling'
-            ,url: MODx.config.connectors_url+'system/index.php'
+            ,url: MODx.config.connector_url
             ,interval: 1000
             ,baseParams: {
-                action: 'console'
+                action: 'system/console'
                 ,register: this.config.register || ''
                 ,topic: this.config.topic || ''
+                ,clear: false
                 ,show_filename: this.config.show_filename || 0
                 ,format: this.config.format || 'html_log'
             }
         });
         Ext.Direct.addProvider(this.provider);
-        Ext.Direct.on('message', function(e,p) {
-            var out = this.getComponent('body');
-            if (out) {
-                out.el.insertHtml('beforeEnd',e.data);
-                e.data = '';
-                out.el.scroll('b', out.el.getHeight(), true);
-            }
-            if (e.complete) {
-                this.fireEvent('complete');
-            }
-            delete e;
-        },this);
+        Ext.Direct.on('message', this.onMessage, this);
+    }
+
+    ,onMessage: function(e,p) {
+        var out = this.getComponent('body');
+        if (out) {
+            out.el.insertHtml('beforeEnd',e.data);
+            e.data = '';
+            out.el.scroll('b', out.el.getHeight(), true);
+        }
+        if (e.complete) {
+            this.fireEvent('complete');
+        }
+        delete e;
     }
 
     ,onComplete: function() {
-        this.provider.disconnect();
+        if (this.provider && this.provider.disconnect) {
+            try {
+                this.provider.disconnect();
+            } catch (e) {}
+        }
         this.fbar.setDisabled(false);
         this.keyMap.setDisabled(false);
     }
@@ -110,14 +117,14 @@ Ext.extend(MODx.Console,Ext.Window,{
     ,download: function() {
         var c = this.getComponent('body').getEl().dom.innerHTML || '&nbsp;';
         MODx.Ajax.request({
-            url: MODx.config.connectors_url+'system/index.php'
+            url: MODx.config.connector_url
             ,params: {
-                action: 'downloadOutput'
+                action: 'system/downloadoutput'
                 ,data: c
             }
             ,listeners: {
                 'success':{fn:function(r) {
-                    location.href = MODx.config.connectors_url+'system/index.php?action=downloadOutput&HTTP_MODAUTH='+MODx.siteId+'&download='+r.message;
+                    location.href = MODx.config.connector_url+'?action=system/downloadOutput&HTTP_MODAUTH='+MODx.siteId+'&download='+r.message;
                 },scope:this}
             }            
         });

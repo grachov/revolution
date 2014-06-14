@@ -28,9 +28,9 @@ $_lang['area_system'] = 'System and Server';
 $_lang['areas'] = 'Areas';
 $_lang['charset'] = 'Charset';
 $_lang['country'] = 'Country';
-$_lang['description_desc'] = 'A short description of the Setting. This can be a Lexicon Entry key.';
+$_lang['description_desc'] = 'A short description of the Setting. This can be a Lexicon Entry based on the key, following the format "setting_" + key + "_desc".';
 $_lang['key_desc'] = 'The key for the Setting. It will be available in your content via the [[++key]] placeholder.';
-$_lang['name_desc'] = 'A Name for the Setting. This can be a Lexicon Entry key.';
+$_lang['name_desc'] = 'A Name for the Setting. This can be a Lexicon Entry based on the key, following the format "setting_" + key.';
 $_lang['namespace'] = 'Namespace';
 $_lang['namespace_desc'] = 'The Namespace that this Setting is associated with. The default Lexicon Topic will be loaded for this Namespace when grabbing Settings.';
 $_lang['namespace_filter'] = 'Filter by namespace...';
@@ -196,6 +196,9 @@ $_lang['setting_compress_js_max_files_desc'] = 'The maximum number of JavaScript
 $_lang['setting_concat_js'] = 'Use Concatenated Javascript Libraries';
 $_lang['setting_concat_js_desc'] = 'When this is enabled, MODX will use a concatenated version of its common JavaScript libraries in the manager interface. This greatly reduces load and execution time within the manager. Disable only if you are modifying core elements.';
 
+$_lang['setting_confirm_navigation'] = 'Confirm Navigation with unsaved changes';
+$_lang['setting_confirm_navigation_desc'] = 'When this is enabled, the user will be prompted to confirm their intention if there are unsaved changes.';
+
 $_lang['setting_container_suffix'] = 'Container Suffix';
 $_lang['setting_container_suffix_desc'] = 'The suffix to append to Resources set as containers when using FURLs.';
 
@@ -248,8 +251,11 @@ $_lang['setting_enable_dragdrop'] = 'Enable Drag/Drop in Resource/Element Trees'
 $_lang['setting_enable_dragdrop_desc'] = 'If off, will prevent dragging and dropping in Resource and Element trees.';
 
 $_lang['setting_error_page'] = 'Error Page';
-$_lang['setting_error_page_desc'] = 'Enter the ID of the document you want to send users to if they request a document which doesn\'t actually exist. <strong>NOTE: make sure this ID you enter belongs to an existing document, and that it has been published!</strong>';
+$_lang['setting_error_page_desc'] = 'Enter the ID of the document you want to send users to if they request a document which doesn\'t actually exist (404 Page Not Found). <strong>NOTE: make sure this ID you enter belongs to an existing document, and that it has been published!</strong>';
 $_lang['setting_error_page_err'] = 'Please specify a document ID that is the error page.';
+
+$_lang['setting_ext_debug'] = 'ExtJS debug';
+$_lang['setting_ext_debug_desc'] = 'Whether or not to load ext-all-debug.js to help debug your ExtJS code.';
 
 $_lang['setting_extension_packages'] = 'Extension Packages';
 $_lang['setting_extension_packages_desc'] = 'A JSON array of packages to load on MODX instantiation. In the format [{"packagename":{path":"path/to/package"},{"anotherpkg":{"path":"path/to/otherpackage"}}]';
@@ -728,6 +734,12 @@ $_lang['setting_welcome_screen_desc'] = 'If set to true, the welcome screen will
 
 $_lang['setting_welcome_screen_url'] = 'Welcome Screen URL';
 $_lang['setting_welcome_screen_url_desc'] = 'The URL for the welcome screen that loads on first load of MODX Revolution.';
+
+$_lang['setting_welcome_action'] = 'Welcome Action';
+$_lang['setting_welcome_action_desc'] = 'The default controller to load when accessing the manager when no controller is specified in the URL.';
+
+$_lang['setting_welcome_namespace'] = 'Welcome Namespace';
+$_lang['setting_welcome_namespace_desc'] = 'The namespace the Welcome Action belongs to.';
 
 $_lang['setting_which_editor'] = 'Editor to use';
 $_lang['setting_which_editor_desc'] = 'Here you can select which Rich Text Editor you wish to use. You can download and install additional Rich Text Editors from Package Management.';

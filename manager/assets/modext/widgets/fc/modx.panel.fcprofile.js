@@ -7,8 +7,10 @@
 MODx.panel.FCProfile = function(config) {
     config = config || {};
     Ext.applyIf(config,{
-        url: MODx.config.connectors_url+'security/forms/profile.php'
-        ,baseParams: {}
+        url: MODx.config.connector_url
+        ,baseParams: {
+            action: 'security/forms/profile/get'
+        }
         ,id: 'modx-panel-fc-profile'
 		,cls: 'container'
         ,class_key: 'modFormCustomizationProfile'
@@ -77,13 +79,14 @@ MODx.panel.FCProfile = function(config) {
                 xtype: 'modx-grid-fc-set'
 				,cls:'main-wrapper'
                 ,baseParams: {
-                    action: 'getList'
+                    action: 'security/forms/set/getList'
                     ,profile: config.record.id
                 }
                 ,preventRender: true
             }]
         },{
             title: _('usergroups')
+            ,layout: 'anchor'
             ,items: [{
                 html: '<p>'+_('profile_usergroups_msg')+'</p>'
 				,bodyCssClass: 'panel-desc'
@@ -97,7 +100,6 @@ MODx.panel.FCProfile = function(config) {
         }],{
             id: 'modx-fc-profile-tabs'
         })]
-        ,useLoadingMask: true
         ,listeners: {
             'setup': {fn:this.setup,scope:this}
             ,'success': {fn:this.success,scope:this}
@@ -111,7 +113,9 @@ Ext.extend(MODx.panel.FCProfile,MODx.FormPanel,{
     ,setup: function() {
         if (!this.initialized) { this.getForm().setValues(this.config.record); }
         if (!Ext.isEmpty(this.config.record.name)) {
-            Ext.getCmp('modx-fcp-header').getEl().update('<h2>'+_('profile')+': '+this.config.record.name+'</h2>');
+            Ext.defer(function() {
+                Ext.getCmp('modx-fcp-header').update('<h2>'+_('profile')+': '+this.config.record.name+'</h2>');
+            }, 250, this);
         }
         this.fireEvent('ready',this.config.record);
         this.clearDirty();
@@ -213,7 +217,7 @@ Ext.extend(MODx.window.AddGroupToProfile,MODx.Window,{
         var rec = {};
         rec.id = Ext.getCmp('modx-fcaug-usergroup').getValue();
         rec.name = Ext.getCmp('modx-fcaug-usergroup').getRawValue();
-        
+
         var g = Ext.getCmp('modx-grid-fc-profile-usergroups');
         var s = g.getStore();
         var v = s.findExact('id',rec.id);

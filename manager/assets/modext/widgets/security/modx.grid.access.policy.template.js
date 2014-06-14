@@ -47,10 +47,14 @@ MODx.grid.AccessPolicyTemplate = function(config) {
     this.sm = new Ext.grid.CheckboxSelectionModel();
     Ext.applyIf(config,{
         id: 'modx-grid-access-policy-template'
-        ,url: MODx.config.connectors_url+'security/access/policy/template.php'
+        ,url: MODx.config.connector_url
+        ,baseParams: {
+            action: 'security/access/policy/template/getlist'
+        }
         ,fields: ['id','name','description','template_group','template_group_name','total_permissions','cls']
         ,paging: true
         ,autosave: true
+        ,save_action: 'security/access/policy/template/updatefromgrid'
         ,remoteSort: true
         ,sm: this.sm
         ,columns: [this.sm,{
@@ -79,6 +83,7 @@ MODx.grid.AccessPolicyTemplate = function(config) {
         }]
         ,tbar: [{
             text: _('policy_template_create')
+            ,cls:'primary-button'
             ,scope: this
             ,handler: this.createPolicyTemplate
         },'-',{
@@ -131,14 +136,14 @@ Ext.extend(MODx.grid.AccessPolicyTemplate,MODx.grid.Grid,{
     }
     ,clearFilter: function() {
     	this.getStore().baseParams = {
-            action: 'getList'
+            action: 'security/access/policy/template/getList'
     	};
         Ext.getCmp('modx-policy-template-search').reset();
     	this.getBottomToolbar().changePage(1);
         this.refresh();
     }
     ,editPolicyTemplate: function(itm,e) {
-        MODx.loadPage(MODx.action['security/access/policy/template/update'], 'id='+this.menu.record.id);
+        MODx.loadPage('security/access/policy/template/update', 'id='+this.menu.record.id);
     }
     
     ,createPolicyTemplate: function(btn,e) {
@@ -163,12 +168,12 @@ Ext.extend(MODx.grid.AccessPolicyTemplate,MODx.grid.Grid,{
         MODx.Ajax.request({
             url: this.config.url
             ,params: {
-                action: 'export'
+                action: 'security/access/policy/template/export'
                 ,id: id
             }
             ,listeners: {
                 'success': {fn:function(r) {
-                    location.href = this.config.url+'?action=export&download=1&id='+id+'&HTTP_MODAUTH='+MODx.siteId;
+                    location.href = this.config.url+'?action=security/access/policy/template/export&download=1&id='+id+'&HTTP_MODAUTH='+MODx.siteId;
                 },scope:this}
             }
         });
@@ -243,7 +248,7 @@ Ext.extend(MODx.grid.AccessPolicyTemplate,MODx.grid.Grid,{
             ,text: _('policy_template_remove_multiple_confirm')
             ,url: this.config.url
             ,params: {
-                action: 'removeMultiple'
+                action: 'security/access/policy/template/removeMultiple'
                 ,templates: cs
             }
             ,listeners: {
@@ -272,8 +277,8 @@ MODx.window.CreateAccessPolicyTemplate = function(config) {
     Ext.applyIf(config,{
         width: 500
         ,title: _('policy_template_create')
-        ,url: MODx.config.connectors_url+'security/access/policy/template.php'
-        ,action: 'create'
+        ,url: MODx.config.connector_url
+        ,action: 'security/access/policy/template/create'
         ,fields: [{
             fieldLabel: _('name')
             ,name: 'name'
@@ -329,7 +334,10 @@ MODx.combo.AccessPolicyTemplateGroups = function(config) {
         ,editable: false
         ,allowBlank: false
         ,listWidth: 300
-        ,url: MODx.config.connectors_url+'security/access/policy/template.group.php'
+        ,url: MODx.config.connector_url
+        ,baseParams: {
+            action: 'security/access/policy/template/group/getlist'
+        }
         ,tpl: new Ext.XTemplate('<tpl for="."><div class="x-combo-list-item"><span style="font-weight: bold">{name}</span>'
             ,'<p style="margin: 0; font-size: 11px; color: gray;">{description}</p></div></tpl>')
     });
@@ -345,8 +353,8 @@ MODx.window.ImportPolicyTemplate = function(config) {
     Ext.applyIf(config,{
         title: _('policy_template_import')
         ,id: 'modx-window-policy-template-import'
-        ,url: MODx.config.connectors_url+'security/access/policy/template.php'
-        ,action: 'import'
+        ,url: MODx.config.connector_url
+        ,action: 'security/access/policy/template/import'
         ,fileUpload: true
         ,saveBtnText: _('import')
         ,fields: [{

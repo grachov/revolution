@@ -1,7 +1,7 @@
 
 /**
  * Loads the usergroup update page
- * 
+ *
  * @class MODx.page.UpdateUserGroup
  * @extends MODx.Component
  * @param {Object} config An object of config properties
@@ -12,7 +12,7 @@ MODx.page.UpdateUserGroup = function(config) {
     Ext.applyIf(config,{
         formpanel: 'modx-panel-user-group'
         ,buttons: [{
-            process: 'update'
+            process: 'security/group/update'
             ,text: _('save')
             ,method: 'remote'
             ,checkDirty: true
@@ -21,9 +21,10 @@ MODx.page.UpdateUserGroup = function(config) {
                 ,ctrl: true
             }]
         },'-',{
-            process: 'cancel'
-            ,text: _('cancel')
-            ,params: {a:'security/permission'}
+            text: _('cancel')
+            ,handler: function() {
+                MODx.loadPage('security/permission')
+            }
         },'-',{
             text: _('help_ex')
             ,handler: MODx.loadHelpPane
@@ -31,7 +32,6 @@ MODx.page.UpdateUserGroup = function(config) {
         ,components: [{
             xtype: 'modx-panel-user-group'
             ,record: config.record || {}
-            ,renderTo: 'modx-panel-user-group-div'
             ,usergroup: MODx.request.id
         }]
     });

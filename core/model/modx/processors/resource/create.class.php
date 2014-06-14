@@ -65,7 +65,7 @@ class modResourceCreateProcessor extends modObjectCreateProcessor {
 
     /**
      * Allow for Resources to use derivative classes for their processors
-     * 
+     *
      * @static
      * @param modX $modx
      * @param $className
@@ -106,12 +106,15 @@ class modResourceCreateProcessor extends modObjectCreateProcessor {
      * Process the form and create the Resource
      *
      * {@inheritDoc}
-     * 
+     *
      * @return array|string
      */
     public function beforeSet() {
         /* default settings */
         $this->prepareParent();
+        if ($this->getProperty('parent') === (int) $this->modx->getOption('tree_root_id') && !$this->modx->hasPermission('new_document_in_root')) {
+            return $this->modx->lexicon('permission_denied');
+        }
         $set = $this->checkParentPermissions();
         if ($set !== true) return $set;
 
@@ -202,11 +205,17 @@ class modResourceCreateProcessor extends modObjectCreateProcessor {
         $scriptProperties['searchable'] = !isset($scriptProperties['searchable']) ? (integer) $this->workingContext->getOption('search_default', 1) : (empty($scriptProperties['searchable']) ? 0 : 1);
         $scriptProperties['content_type'] = !isset($scriptProperties['content_type']) ? (integer) $this->workingContext->getOption('default_content_type',1) : (integer)$scriptProperties['content_type'];
         $scriptProperties['syncsite'] = empty($scriptProperties['syncsite']) ? 0 : 1;
-        $scriptProperties['createdon'] = strftime('%Y-%m-%d %H:%M:%S');
-        $scriptProperties['createdby'] = $this->modx->user->get('id');
         $scriptProperties['menuindex'] = empty($scriptProperties['menuindex']) ? 0 : $scriptProperties['menuindex'];
         $scriptProperties['deleted'] = empty($scriptProperties['deleted']) ? 0 : 1;
         $scriptProperties['uri_override'] = empty($scriptProperties['uri_override']) ? 0 : 1;
+
+        if(empty($scriptProperties['createdon'])){
+            $scriptProperties['createdon'] = strftime('%Y-%m-%d %H:%M:%S');
+        }
+
+        if(empty($scriptProperties['createdby'])){
+            $scriptProperties['createdby'] = $this->modx->user->get('id');
+        }
 
         /* publish and unpublish dates */
         $now = time();
@@ -231,7 +240,7 @@ class modResourceCreateProcessor extends modObjectCreateProcessor {
 
         /* modDocument content is posted as ta */
         if (isset($scriptProperties['ta'])) $scriptProperties['content'] = $scriptProperties['ta'];
-        
+
         /* deny publishing if not permitted */
         if (!$this->modx->hasPermission('publish_document')) {
             $scriptProperties['publishedon'] = 0;
@@ -247,9 +256,9 @@ class modResourceCreateProcessor extends modObjectCreateProcessor {
             } else {
                 $scriptProperties['publishedon'] = strtotime($scriptProperties['publishedon']);
             }
-            $scriptProperties['publishedby'] = $scriptProperties['published'] ? $this->modx->user->get('id') : 0;
+            $scriptProperties['publishedby'] = $scriptProperties['published'] ? !empty($scriptProperties['publishedby']) ? $scriptProperties['publishedby'] : $this->modx->user->get('id') : 0;
         }
-        
+
         $this->setProperties($scriptProperties);
         return true;
     }
@@ -274,7 +283,7 @@ class modResourceCreateProcessor extends modObjectCreateProcessor {
      */
     public function prepareParent() {
         $this->checkIfParentIsContext();
-        
+
         $parent = $this->getProperty('parent');
         $parent = empty($parent) ? 0 : intval($parent);
         $this->setProperty('parent',$parent);
@@ -315,7 +324,7 @@ class modResourceCreateProcessor extends modObjectCreateProcessor {
 
         /* default pagetitle if not reloading template */
         if (!$this->getProperty('reloadOnly',false)) {
-            if (empty($pageTitle)) {
+            if ($pageTitle === '') {
                 $pageTitle = $this->modx->lexicon('resource_untitled');
             }
         }
@@ -325,7 +334,7 @@ class modResourceCreateProcessor extends modObjectCreateProcessor {
 
     /**
      * Get the working Context for the Resource
-     * 
+     *
      * @return modContext
      */
     public function getWorkingContext() {
@@ -349,7 +358,7 @@ class modResourceCreateProcessor extends modObjectCreateProcessor {
         $pageTitle = $this->getProperty('pagetitle');
         if ($this->workingContext->getOption('friendly_urls', false) && (!$this->getProperty('reloadOnly',false) || !empty($pageTitle))) {
             $alias = $this->getProperty('alias');
-            
+
             /* auto assign alias */
             if (empty($alias) && $this->workingContext->getOption('automatic_alias', false)) {
                 $alias = $this->object->cleanAlias($pageTitle);
@@ -505,7 +514,7 @@ class modResourceCreateProcessor extends modObjectCreateProcessor {
 
     /**
      * Save the Resource Groups on the object
-     * 
+     *
      * @return void
      */
     public function saveResourceGroups() {
@@ -588,7 +597,7 @@ class modResourceCreateProcessor extends modObjectCreateProcessor {
 
     /**
      * Quick check to make sure it's not site_start, if so, publish if not published to prevent site error
-     * 
+     *
      * @return boolean
      */
     public function checkIfSiteStart() {

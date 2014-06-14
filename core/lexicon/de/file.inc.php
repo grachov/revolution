@@ -12,7 +12,7 @@
  * MODX Revolution translated to German by Jan-Christoph Ihrens (enigmatic_user, enigma@lunamail.de)
  */
 $_lang['directory'] = 'Verzeichnis';
-$_lang['file_confirm_remove'] = 'Sind Sie sicher, dass Sie diese Datei löschen möchten? Das könnte möglicherweise dazu führen, dass Ihre Website ganz oder teilweise nicht mehr funktioniert.';
+$_lang['file_confirm_remove'] = 'Sind Sie sicher, dass Sie diese Datei löschen möchten? Das Löschen einer Datei kann möglicherweise dazu führen, dass Ihre Website ganz oder teilweise nicht mehr funktioniert. Stellen Sie sicher, dass Sie wissen, welchen Zweck diese Datei erfüllt, bevor Sie sie löschen.';
 $_lang['file_create'] = 'Datei erstellen';
 $_lang['file_deleted'] = 'Erfolgreich!';
 $_lang['file_delete_file'] = 'Datei löschen';
@@ -21,8 +21,10 @@ $_lang['file_download'] = 'Datei herunterladen';
 $_lang['file_download_file'] = 'Datei herunterladen';
 $_lang['file_download_unzip'] = 'Datei entpacken';
 $_lang['file_edit'] = 'Datei bearbeiten';
+$_lang['file_err_ae'] = 'Datei %s existiert bereits';
 $_lang['file_err_chmod'] = 'Ein unbekannter Fehler trat auf beim Versuch, die Rechte der Datei / des Verzeichnisses zu ändern.';
 $_lang['file_err_chmod_ns'] = 'Bitte geben Sie die Rechte an, die mit CHMOD eingestellt werden sollen.';
+$_lang['file_err_create'] = 'Ein unbekannter Fehler trat auf bei dem Versuch, die Datei zu erstellen.';
 $_lang['file_err_ext_not_allowed'] = 'Die Dateiendung `[[+ext]]` ist nicht zulässig.';
 $_lang['file_err_filter'] = 'Es gibt keine Dateien, die dem angegebenen Filter entsprechen.';
 $_lang['file_err_invalid'] = 'Die Datei ist keine gültige Datei und kann nicht gelöscht werden.';
@@ -118,3 +120,20 @@ $_lang['upf_upload_err'] = 'Upload-Fehler.';
 $_lang['upf_uploading'] = 'Lade hoch...';
 $_lang['upf_uploading_desc'] = 'Lade hoch: {0} von {1} Dateien übertragen.';
 $_lang['upload_files'] = 'Dateien hochladen';
+$_lang['no_file_err'] = 'Es wurde keine Datei hochgeladen.';
+
+$_lang['upload.buttons.choose']           = 'Datei(en) wählen';
+$_lang['upload.buttons.clear']            = 'Liste leeren';
+$_lang['upload.buttons.upload']           = 'Upload starten';
+$_lang['upload.buttons.close']            = 'Schließen';
+$_lang['upload.title.destination_path']   = 'Speicherziel: [[+path]]';
+$_lang['upload.upload_progress']          = '[[+loaded]] / [[+total]]';
+$_lang['upload.notpermitted.extension']   = 'Upload von Dateityp (.[[+ext]]) nicht erlaubt!';
+$_lang['upload.notpermitted.filesize']    = 'Datei größer ([[+size]]) als erlaubt! (max. [[+max]])';
+$_lang['upload.columns.file']             = 'Datei';
+$_lang['upload.columns.state']            = 'Status';
+$_lang['upload.contextmenu.remove_entry'] = 'Eintrag entfernen';
+$_lang['upload.clear_list.all']           = 'Gesamte Liste leeren';
+$_lang['upload.clear_list.notpermitted']  = 'Ungültige Einträge entfernen';
+$_lang['upload.msg.title.error']          = 'Fehler';
+$_lang['upload.upload.success']           = 'Datei erfolgreich hochgeladen';

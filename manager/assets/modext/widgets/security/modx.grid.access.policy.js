@@ -1,6 +1,6 @@
 /**
  * Loads the panel for managing access policies.
- * 
+ *
  * @class MODx.panel.AccessPolicies
  * @extends MODx.FormPanel
  * @param {Object} config An object of configuration properties
@@ -36,7 +36,7 @@ Ext.reg('modx-panel-access-policies',MODx.panel.AccessPolicies);
 
 /**
  * Loads a grid of modAccessPolicies.
- * 
+ *
  * @class MODx.grid.AccessPolicy
  * @extends MODx.grid.Grid
  * @param {Object} config An object of options.
@@ -47,10 +47,14 @@ MODx.grid.AccessPolicy = function(config) {
     this.sm = new Ext.grid.CheckboxSelectionModel();
     Ext.applyIf(config,{
         id: 'modx-grid-access-policy'
-        ,url: MODx.config.connectors_url+'security/access/policy.php'
+        ,url: MODx.config.connector_url
+        ,baseParams: {
+            action: 'security/access/policy/getlist'
+        }
         ,fields: ['id','name','description','class','data','parent','template','template_name','active_permissions','total_permissions','active_of','cls']
         ,paging: true
         ,autosave: true
+        ,save_action: 'security/access/policy/updatefromgrid'
         ,remoteSort: true
         ,sm: this.sm
         ,columns: [this.sm,{
@@ -76,6 +80,7 @@ MODx.grid.AccessPolicy = function(config) {
         }]
         ,tbar: [{
             text: _('policy_create')
+            ,cls:'primary-button'
             ,scope: this
             ,handler: this.createPolicy
         },'-',{
@@ -128,7 +133,7 @@ Ext.extend(MODx.grid.AccessPolicy,MODx.grid.Grid,{
     }
     ,clearFilter: function() {
     	this.getStore().baseParams = {
-            action: 'getList'
+            action: 'security/access/policy/getList'
     	};
         Ext.getCmp('modx-policy-search').reset();
     	this.getBottomToolbar().changePage(1);
@@ -136,9 +141,9 @@ Ext.extend(MODx.grid.AccessPolicy,MODx.grid.Grid,{
     }
 
     ,editPolicy: function(itm,e) {
-        MODx.loadPage(MODx.action['security/access/policy/update'], 'id='+this.menu.record.id);
+        MODx.loadPage('security/access/policy/update', 'id='+this.menu.record.id);
     }
-    
+
     ,createPolicy: function(btn,e) {
         var r = this.menu.record;
         if (!this.windows.apc) {
@@ -161,12 +166,12 @@ Ext.extend(MODx.grid.AccessPolicy,MODx.grid.Grid,{
         MODx.Ajax.request({
             url: this.config.url
             ,params: {
-                action: 'export'
+                action: 'security/access/policy/export'
                 ,id: id
             }
             ,listeners: {
                 'success': {fn:function(r) {
-                    location.href = this.config.url+'?action=export&download=1&id='+id+'&HTTP_MODAUTH='+MODx.siteId;
+                    location.href = this.config.url+'?action=security/access/policy/export&download=1&id='+id+'&HTTP_MODAUTH='+MODx.siteId;
                 },scope:this}
             }
         });
@@ -208,7 +213,7 @@ Ext.extend(MODx.grid.AccessPolicy,MODx.grid.Grid,{
                 });
                 m.push({
                     text: _('policy_duplicate')
-                    ,handler: this.confirm.createDelegate(this,["duplicate","policy_duplicate_confirm"])
+                    ,handler: this.confirm.createDelegate(this,["security/access/policy/duplicate","policy_duplicate_confirm"])
                 });
             }
             if (m.length > 0) { m.push('-'); }
@@ -220,8 +225,8 @@ Ext.extend(MODx.grid.AccessPolicy,MODx.grid.Grid,{
                 if (m.length > 0) m.push('-');
                 m.push({
                     text: _('policy_remove')
-                    ,handler: this.confirm.createDelegate(this,["remove","policy_remove_confirm"])
-                });                
+                    ,handler: this.confirm.createDelegate(this,["security/access/policy/remove","policy_remove_confirm"])
+                });
             }
         }
 
@@ -229,6 +234,7 @@ Ext.extend(MODx.grid.AccessPolicy,MODx.grid.Grid,{
             this.addContextMenuItem(m);
         }
     }
+
     ,removeSelected: function() {
         var cs = this.getSelectedAsList();
         if (cs === false) return false;
@@ -238,7 +244,7 @@ Ext.extend(MODx.grid.AccessPolicy,MODx.grid.Grid,{
             ,text: _('policy_remove_multiple_confirm')
             ,url: this.config.url
             ,params: {
-                action: 'removeMultiple'
+                action: 'security/access/policy/removeMultiple'
                 ,policies: cs
             }
             ,listeners: {
@@ -255,7 +261,7 @@ Ext.reg('modx-grid-access-policy',MODx.grid.AccessPolicy);
 
 /**
  * Generates a window for creating Access Policies.
- *  
+ *
  * @class MODx.window.CreateAccessPolicy
  * @extends MODx.Window
  * @param {Object} config An object of options.
@@ -267,8 +273,8 @@ MODx.window.CreateAccessPolicy = function(config) {
     Ext.applyIf(config,{
         width: 500
         ,title: _('policy_create')
-        ,url: MODx.config.connectors_url+'security/access/policy.php'
-        ,action: 'create'
+        ,url: MODx.config.connector_url
+        ,action: 'security/access/policy/create'
         ,fields: [{
             fieldLabel: _('name')
             ,description: MODx.expandHelp ? '' : _('policy_desc_name')
@@ -336,7 +342,10 @@ MODx.combo.AccessPolicyTemplate = function(config) {
         ,allowBlank: false
         ,listWidth: 300
         ,pageSize: 20
-        ,url: MODx.config.connectors_url+'security/access/policy/template.php'
+        ,url: MODx.config.connector_url
+        ,baseParams: {
+            action: 'security/access/policy/template/getlist'
+        }
         ,tpl: new Ext.XTemplate('<tpl for="."><div class="x-combo-list-item"><span style="font-weight: bold">{name}</span>'
             ,'<p style="margin: 0; font-size: 11px; color: gray;">{description}</p></div></tpl>')
     });
@@ -351,8 +360,8 @@ MODx.window.ImportPolicy = function(config) {
     Ext.applyIf(config,{
         title: _('policy_import')
         ,id: 'modx-window-policy-import'
-        ,url: MODx.config.connectors_url+'security/access/policy.php'
-        ,action: 'import'
+        ,url: MODx.config.connector_url
+        ,action: 'security/access/policy/import'
         ,fileUpload: true
         ,saveBtnText: _('import')
         ,fields: [{

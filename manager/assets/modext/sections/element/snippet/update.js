@@ -10,13 +10,8 @@ MODx.page.UpdateSnippet = function(config) {
     config = config || {};
     Ext.applyIf(config,{
         formpanel: 'modx-panel-snippet'
-        ,actions: {
-            'new': 'element/snippet/create'
-            ,edit: 'element/snippet/update'
-            ,cancel: 'welcome'
-        }
         ,buttons: [{
-            process: 'update'
+            process: 'element/snippet/update'
             ,text: _('save')
             ,method: 'remote'
             ,checkDirty: true
@@ -29,14 +24,11 @@ MODx.page.UpdateSnippet = function(config) {
             ,handler: this.duplicate
             ,scope: this
         },'-',{
-            process: 'cancel'
-            ,text: _('cancel')
-            ,params:{a:'welcome'}
+            text: _('cancel')
         },'-',{
             text: _('help_ex')
             ,handler: MODx.loadHelpPane
         }]
-        ,loadStay: true
         ,components: [{
             xtype: 'modx-panel-snippet'
             ,renderTo: 'modx-panel-snippet-div'
@@ -60,7 +52,7 @@ Ext.extend(MODx.page.UpdateSnippet,MODx.Component, {
                 success: {
                     fn: function(r) {
                         var response = Ext.decode(r.a.response.responseText);
-                        MODx.loadPage(MODx.action['element/'+ rec.type +'/update'], 'id='+ response.object.id);
+                        MODx.loadPage('element/'+ rec.type +'/update', 'id='+ response.object.id);
                     },scope:this}
                 ,hide:{fn:function() {this.destroy();}}
             }

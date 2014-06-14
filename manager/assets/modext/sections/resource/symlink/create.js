@@ -1,6 +1,6 @@
 /**
  * Loads the create resource page
- * 
+ *
  * @class MODx.page.CreateSymLink
  * @extends MODx.Component
  * @param {Object} config An object of config properties
@@ -9,18 +9,12 @@
 MODx.page.CreateSymLink = function(config) {
     config = config || {};
     Ext.applyIf(config,{
-        url: MODx.config.connectors_url+'resource/index.php'
+        url: MODx.config.connector_url
         ,formpanel: 'modx-panel-resource'
         ,id: 'modx-page-update-resource'
         ,which_editor: 'none'
-        ,action: 'create'
-        ,actions: {
-            'new': 'resource/create'
-            ,edit: 'resource/update'
-            ,cancel: 'welcome'
-        }
+        ,action: 'resource/create'
         ,buttons: this.getButtons(config)
-        ,loadStay: true
         ,components: [{
             xtype: 'modx-panel-symlink'
             ,renderTo: 'modx-panel-symlink-div'
@@ -39,8 +33,10 @@ Ext.extend(MODx.page.CreateSymLink,MODx.Component,{
         var btns = [];
         if (cfg.canSave == 1) {
             btns.push({
-                process: 'create'
+                process: 'resource/create'
+                ,reload: true
                 ,id: 'modx-abtn-save'
+                ,cls:'primary-button'
                 ,text: _('save')
                 ,method: 'remote'
                 ,checkDirty: true
@@ -52,9 +48,7 @@ Ext.extend(MODx.page.CreateSymLink,MODx.Component,{
             btns.push('-');
         }
         btns.push({
-            process: 'cancel'
-            ,text: _('cancel')
-            ,params: { a: 'welcome' }
+            text: _('cancel')
             ,id: 'modx-abtn-cancel'
         });
         btns.push('-');

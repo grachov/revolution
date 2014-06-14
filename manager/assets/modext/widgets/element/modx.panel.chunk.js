@@ -7,8 +7,10 @@
 MODx.panel.Chunk = function(config) {
     config = config || {};
     Ext.applyIf(config,{
-        url: MODx.config.connectors_url+'element/chunk.php'
-        ,baseParams: {}
+        url: MODx.config.connector_url
+        ,baseParams: {
+            action: 'element/chunk/get'
+        }
         ,id: 'modx-panel-chunk'
 		,cls: 'container form-with-labels'
         ,class_key: 'modChunk'
@@ -102,6 +104,17 @@ MODx.panel.Chunk = function(config) {
                         ,value: config.record.static_file || ''
                         ,hidden: !config.record['static']
                         ,hideMode: 'offsets'
+                        ,validator: function(value){
+                            if (Ext.getCmp('modx-chunk-static').getValue() === true) {
+                                if (Ext.util.Format.trim(value) != '') {
+                                    return true;
+                                } else {
+                                    return _('static_file_ns');
+                                }
+                            }
+
+                            return true;
+                        }
                     },{
                         xtype: MODx.expandHelp ? 'label' : 'hidden'
                         ,forId: 'modx-chunk-static-file'
@@ -174,9 +187,15 @@ MODx.panel.Chunk = function(config) {
                         ,hidden: !config.record['static']
                         ,hideMode: 'offsets'
                         ,baseParams: {
-                            action: 'getList'
+                            action: 'source/getList'
                             ,showNone: true
                             ,streamsOnly: true
+                        }
+                        ,listeners: {
+                            select: {
+                                fn: this.changeSource
+                                ,scope: this
+                            }
                         }
                     },{
                         xtype: MODx.expandHelp ? 'label' : 'hidden'
@@ -221,7 +240,7 @@ MODx.panel.Chunk = function(config) {
         }
     });
     MODx.panel.Chunk.superclass.constructor.call(this,config);
-    setTimeout("Ext.getCmp('modx-element-tree').expand();",1000);
+
     var isStatic = Ext.getCmp('modx-chunk-static');
     if (isStatic) { isStatic.on('check',this.toggleStaticFile); }
 };
@@ -248,6 +267,17 @@ Ext.extend(MODx.panel.Chunk,MODx.FormPanel,{
         MODx.fireEvent('ready');
         return true;
     }
+
+    /**
+     * Set the browser window "media source" source
+     */
+    ,changeSource: function() {
+        var browser = Ext.getCmp('modx-chunk-static-file')
+            ,source = Ext.getCmp('modx-chunk-static-source').getValue();
+
+        browser.config.source = source;
+    }
+
     ,beforeSubmit: function(o) {
         this.cleanupEditor();
         Ext.apply(o.form.baseParams,{
@@ -261,7 +291,7 @@ Ext.extend(MODx.panel.Chunk,MODx.FormPanel,{
     ,success: function(r) {
         if (MODx.request.id) Ext.getCmp('modx-grid-element-properties').save();
         this.getForm().setValues(r.result.object);
-        
+
         var c = Ext.getCmp('modx-chunk-category').getValue();
         var n = c !== '' && c !== null && c != 0 ? 'n_chunk_category_'+c : 'n_type_chunk';
         var t = Ext.getCmp('modx-element-tree');
@@ -271,7 +301,7 @@ Ext.extend(MODx.panel.Chunk,MODx.FormPanel,{
         	t.refreshNode(n,true);
         }
     }
-        
+
     ,cleanupEditor: function() {
         if (MODx.onSaveEditor) {
             var fld = Ext.getCmp('modx-chunk-snippet');

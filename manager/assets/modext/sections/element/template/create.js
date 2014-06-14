@@ -1,6 +1,6 @@
 /**
  * Loads the create template page
- * 
+ *
  * @class MODx.page.CreateTemplate
  * @extends MODx.Component
  * @param {Object} config An object of config properties
@@ -10,35 +10,27 @@ MODx.page.CreateTemplate = function(config) {
     config = config || {};
     Ext.applyIf(config,{
         formpanel: 'modx-panel-template'
-        ,actions: {
-            'new': 'element/template/create'
-            ,edit: 'element/template/update'
-            ,cancel: 'welcome'
-        }
         ,buttons: [{
-            process: 'create'
+            process: 'element/template/create'
             ,text: _('save')
             ,method: 'remote'
             ,checkDirty: true
+            ,reload: true
             ,keys: [{
                 key: MODx.config.keymap_save || 's'
                 ,ctrl: true
             }]
         },'-',{
-            process: 'cancel'
-            ,text: _('cancel')
-            ,params: {a:'welcome'}
+            text: _('cancel')
         },'-',{
             text: _('help_ex')
             ,handler: MODx.loadHelpPane
         }]
-        ,loadStay: true
         ,components: [{
             xtype: 'modx-panel-template'
             ,renderTo: 'modx-panel-template-div'
             ,template: 0
             ,record: config.record || {}
-            ,baseParams: { action: 'create', category: MODx.request.category }
         }]
     });
     MODx.page.CreateTemplate.superclass.constructor.call(this,config);
